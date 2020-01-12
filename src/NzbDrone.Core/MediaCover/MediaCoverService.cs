@@ -31,6 +31,7 @@ namespace NzbDrone.Core.MediaCover
     {
         private const string USER_AGENT = "Dalvik/2.1.0 (Linux; U; Android 10; SM-G975U Build/QP1A.190711.020)";
 
+        private readonly IMediaCoverProxy _mediaCoverProxy;
         private readonly IImageResizer _resizer;
         private readonly IBookService _bookService;
         private readonly IHttpClient _httpClient;
@@ -46,7 +47,8 @@ namespace NzbDrone.Core.MediaCover
         // So limit the number of concurrent resizing tasks
         private static SemaphoreSlim _semaphore = new SemaphoreSlim((int)Math.Ceiling(Environment.ProcessorCount / 2.0));
 
-        public MediaCoverService(IImageResizer resizer,
+        public MediaCoverService(IMediaCoverProxy mediaCoverProxy,
+                                 IImageResizer resizer,
                                  IBookService bookService,
                                  IHttpClient httpClient,
                                  IDiskProvider diskProvider,
@@ -56,6 +58,7 @@ namespace NzbDrone.Core.MediaCover
                                  IEventAggregator eventAggregator,
                                  Logger logger)
         {
+            _mediaCoverProxy = mediaCoverProxy;
             _resizer = resizer;
             _bookService = bookService;
             _httpClient = httpClient;
@@ -82,28 +85,39 @@ namespace NzbDrone.Core.MediaCover
 
         public void ConvertToLocalUrls(int entityId, MediaCoverEntity coverEntity, IEnumerable<MediaCover> covers)
         {
-            foreach (var mediaCover in covers)
+            if (entityId == 0)
             {
-                if (mediaCover.CoverType == MediaCoverTypes.Unknown)
+                // Author isn't in Readarr yet, map via a proxy to circument referrer issues
+                foreach (var mediaCover in covers)
                 {
-                    continue;
+                    mediaCover.Url = _mediaCoverProxy.RegisterUrl(mediaCover.Url);
                 }
-
-                var filePath = GetCoverPath(entityId, coverEntity, mediaCover.CoverType, mediaCover.Extension, null);
-
-                if (coverEntity == MediaCoverEntity.Book)
+            }
+            else
+            {
+                foreach (var mediaCover in covers)
                 {
-                    mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/Books/" + entityId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType, mediaCover.Extension);
-                }
-                else
-                {
-                    mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/" + entityId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType, mediaCover.Extension);
-                }
+                    if (mediaCover.CoverType == MediaCoverTypes.Unknown)
+                    {
+                        continue;
+                    }
 
-                if (_diskProvider.FileExists(filePath))
-                {
-                    var lastWrite = _diskProvider.FileGetLastWrite(filePath);
-                    mediaCover.Url += "?lastWrite=" + lastWrite.Ticks;
+                    var filePath = GetCoverPath(entityId, coverEntity, mediaCover.CoverType, mediaCover.Extension, null);
+
+                    if (coverEntity == MediaCoverEntity.Book)
+                    {
+                        mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/Books/" + entityId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType, mediaCover.Extension);
+                    }
+                    else
+                    {
+                        mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/" + entityId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType, mediaCover.Extension);
+                    }
+
+                    if (_diskProvider.FileExists(filePath))
+                    {
+                        var lastWrite = _diskProvider.FileGetLastWrite(filePath);
+                        mediaCover.Url += "?lastWrite=" + lastWrite.Ticks;
+                    }
                 }
             }
         }

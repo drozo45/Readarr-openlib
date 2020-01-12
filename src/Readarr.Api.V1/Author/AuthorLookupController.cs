@@ -11,10 +11,12 @@ namespace Readarr.Api.V1.Author
     public class AuthorLookupController : Controller
     {
         private readonly ISearchForNewAuthor _searchProxy;
+        private readonly IMapCoversToLocal _coverMapper;
 
-        public AuthorLookupController(ISearchForNewAuthor searchProxy)
+        public AuthorLookupController(ISearchForNewAuthor searchProxy, IMapCoversToLocal coverMapper)
         {
             _searchProxy = searchProxy;
+            _coverMapper = coverMapper;
         }
 
         [HttpGet]
@@ -24,12 +26,16 @@ namespace Readarr.Api.V1.Author
             return MapToResource(searchResults).ToList();
         }
 
-        private static IEnumerable<AuthorResource> MapToResource(IEnumerable<NzbDrone.Core.Books.Author> author)
+        private IEnumerable<AuthorResource> MapToResource(IEnumerable<NzbDrone.Core.Books.Author> author)
         {
             foreach (var currentAuthor in author)
             {
                 var resource = currentAuthor.ToResource();
+
+                _coverMapper.ConvertToLocalUrls(resource.Id, MediaCoverEntity.Author, resource.Images);
+
                 var poster = currentAuthor.Metadata.Value.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster);
+
                 if (poster != null)
                 {
                     resource.RemotePoster = poster.Url;

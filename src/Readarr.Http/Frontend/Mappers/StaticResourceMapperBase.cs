@@ -30,7 +30,7 @@ namespace Readarr.Http.Frontend.Mappers
 
         public abstract bool CanHandle(string resourceUrl);
 
-        public FileStreamResult GetResponse(string resourceUrl)
+        public IActionResult GetResponse(string resourceUrl)
         {
             var filePath = Map(resourceUrl);
 
