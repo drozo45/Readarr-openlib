@@ -34,11 +34,11 @@ namespace Readarr.Api.V1.Books
 
                 _coverMapper.ConvertToLocalUrls(resource.Id, MediaCoverEntity.Book, resource.Images);
 
-                var cover = currentBook.Editions.Value.Single(x => x.Monitored).Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Cover);
+                var cover = resource.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Cover);
 
                 if (cover != null)
                 {
-                    resource.RemoteCover = cover.Url;
+                    resource.RemoteCover = cover.RemoteUrl;
                 }
 
                 yield return resource;

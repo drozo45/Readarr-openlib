@@ -90,7 +90,8 @@ namespace NzbDrone.Core.MediaCover
                 // Author isn't in Readarr yet, map via a proxy to circument referrer issues
                 foreach (var mediaCover in covers)
                 {
-                    mediaCover.Url = _mediaCoverProxy.RegisterUrl(mediaCover.Url);
+                    mediaCover.RemoteUrl = mediaCover.Url;
+                    mediaCover.Url = _mediaCoverProxy.RegisterUrl(mediaCover.RemoteUrl);
                 }
             }
             else
@@ -103,6 +104,8 @@ namespace NzbDrone.Core.MediaCover
                     }
 
                     var filePath = GetCoverPath(entityId, coverEntity, mediaCover.CoverType, mediaCover.Extension, null);
+
+                    mediaCover.RemoteUrl = mediaCover.Url;
 
                     if (coverEntity == MediaCoverEntity.Book)
                     {

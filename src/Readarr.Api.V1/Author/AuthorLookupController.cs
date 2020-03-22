@@ -37,11 +37,11 @@ namespace Readarr.Api.V1.Author
 
                 _coverMapper.ConvertToLocalUrls(resource.Id, MediaCoverEntity.Author, resource.Images);
 
-                var poster = currentAuthor.Metadata.Value.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster);
+                var poster = resource.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster);
 
                 if (poster != null)
                 {
-                    resource.RemotePoster = poster.Url;
+                    resource.RemotePoster = poster.RemoteUrl;
                 }
 
                 resource.Folder = _fileNameBuilder.GetAuthorFolder(currentAuthor);

@@ -47,11 +47,11 @@ namespace Readarr.Api.V1.Search
 
                     _coverMapper.ConvertToLocalUrls(resource.Author.Id, MediaCoverEntity.Author, resource.Author.Images);
 
-                    var poster = author.Metadata.Value.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster);
+                    var poster = resource.Author.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster);
 
                     if (poster != null)
                     {
-                        resource.Author.RemotePoster = poster.Url;
+                        resource.Author.RemotePoster = poster.RemoteUrl;
                     }
 
                     resource.Author.Folder = _fileNameBuilder.GetAuthorFolder(author);
@@ -66,11 +66,11 @@ namespace Readarr.Api.V1.Search
 
                     _coverMapper.ConvertToLocalUrls(resource.Book.Id, MediaCoverEntity.Book, resource.Book.Images);
 
-                    var cover = book.Editions.Value.Single(x => x.Monitored).Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Cover);
+                    var cover = resource.Book.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Cover);
 
                     if (cover != null)
                     {
-                        resource.Book.RemoteCover = cover.Url;
+                        resource.Book.RemoteCover = cover.RemoteUrl;
                     }
 
                     resource.Book.Author.Folder = _fileNameBuilder.GetAuthorFolder(book.Author);

@@ -30,13 +30,11 @@ namespace NzbDrone.Core.MediaCover
         private string _url;
         public string Url
         {
-            get
-            {
-                return _url;
-            }
+            get => _url;
             set
             {
                 _url = value;
+
                 if (Extension.IsNullOrWhiteSpace())
                 {
                     Extension = Path.GetExtension(value);
@@ -46,6 +44,7 @@ namespace NzbDrone.Core.MediaCover
 
         public MediaCoverTypes CoverType { get; set; }
         public string Extension { get; private set; }
+        public string RemoteUrl { get; set; }
 
         public MediaCover()
         {
