@@ -4,24 +4,24 @@ namespace NzbDrone.Core.Exceptions
 {
     public class BookNotFoundException : NzbDroneException
     {
-        public string MusicBrainzId { get; set; }
+        public string ForeignBookId { get; set; }
 
-        public BookNotFoundException(string musicbrainzId)
-            : base(string.Format("Book with id {0} was not found, it may have been removed from metadata server.", musicbrainzId))
+        public BookNotFoundException(string foreignBookId)
+            : base($"Book with id {foreignBookId} was not found, it may have been removed from metadata server.")
         {
-            MusicBrainzId = musicbrainzId;
+            ForeignBookId = foreignBookId;
         }
 
-        public BookNotFoundException(string musicbrainzId, string message, params object[] args)
+        public BookNotFoundException(string foreignBookId, string message, params object[] args)
             : base(message, args)
         {
-            MusicBrainzId = musicbrainzId;
+            ForeignBookId = foreignBookId;
         }
 
-        public BookNotFoundException(string musicbrainzId, string message)
+        public BookNotFoundException(string foreignBookId, string message)
             : base(message)
         {
-            MusicBrainzId = musicbrainzId;
+            ForeignBookId = foreignBookId;
         }
     }
 }

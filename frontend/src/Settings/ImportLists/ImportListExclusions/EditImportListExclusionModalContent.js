@@ -76,7 +76,7 @@ function EditImportListExclusionModalContent(props) {
 
               <FormGroup>
                 <FormLabel>
-                  {translate('MusicbrainzId')}
+                  {translate('ForeignId')}
                 </FormLabel>
 
                 <FormInputGroup

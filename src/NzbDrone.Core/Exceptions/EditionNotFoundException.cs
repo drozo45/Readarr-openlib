@@ -4,24 +4,24 @@ namespace NzbDrone.Core.Exceptions
 {
     public class EditionNotFoundException : NzbDroneException
     {
-        public string MusicBrainzId { get; set; }
+        public string ForeignEditionId { get; set; }
 
-        public EditionNotFoundException(string musicbrainzId)
-            : base(string.Format("Edition with id {0} was not found, it may have been removed from metadata server.", musicbrainzId))
+        public EditionNotFoundException(string foreignEditionId)
+            : base($"Edition with id {foreignEditionId} was not found, it may have been removed from metadata server.")
         {
-            MusicBrainzId = musicbrainzId;
+            ForeignEditionId = foreignEditionId;
         }
 
-        public EditionNotFoundException(string musicbrainzId, string message, params object[] args)
+        public EditionNotFoundException(string foreignEditionId, string message, params object[] args)
             : base(message, args)
         {
-            MusicBrainzId = musicbrainzId;
+            ForeignEditionId = foreignEditionId;
         }
 
-        public EditionNotFoundException(string musicbrainzId, string message)
+        public EditionNotFoundException(string foreignEditionId, string message)
             : base(message)
         {
-            MusicBrainzId = musicbrainzId;
+            ForeignEditionId = foreignEditionId;
         }
     }
 }
