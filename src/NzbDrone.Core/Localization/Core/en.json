@@ -518,6 +518,7 @@
   "Large": "Large",
   "LastDuration": "Last Duration",
   "LastExecution": "Last Execution",
+  "LastSearched": "Last Searched",
   "LastWriteTime": "Last Write Time",
   "LatestBook": "Latest Book",
   "LaunchBrowserHelpText": " Open a web browser and navigate to Readarr homepage on app start.",

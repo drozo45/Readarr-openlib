@@ -16,6 +16,7 @@ function MissingRow(props) {
     releaseDate,
     titleSlug,
     title,
+    lastSearchTime,
     disambiguation,
     isSelected,
     columns,
@@ -77,6 +78,15 @@ function MissingRow(props) {
             );
           }
 
+          if (name === 'books.lastSearchTime') {
+            return (
+              <RelativeDateCellConnector
+                key={name}
+                date={lastSearchTime}
+              />
+            );
+          }
+
           if (name === 'actions') {
             return (
               <BookSearchCellConnector
@@ -104,6 +114,7 @@ MissingRow.propTypes = {
   releaseDate: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
+  lastSearchTime: PropTypes.string,
   disambiguation: PropTypes.string,
   isSelected: PropTypes.bool,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,

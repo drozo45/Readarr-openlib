@@ -46,6 +46,12 @@ export const defaultState = {
         isVisible: true
       },
       {
+        name: 'books.lastSearchTime',
+        label: 'Last Searched',
+        isSortable: true,
+        isVisible: false
+      },
+      {
         name: 'actions',
         columnLabel: 'Actions',
         isVisible: true,
@@ -107,6 +113,12 @@ export const defaultState = {
         label: 'Release Date',
         isSortable: true,
         isVisible: true
+      },
+      {
+        name: 'books.lastSearchTime',
+        label: 'Last Searched',
+        isSortable: true,
+        isVisible: false
       },
       {
         name: 'actions',
