@@ -10,7 +10,7 @@
     <PackageVersion Include="Equ" Version="2.3.0" />
     <PackageVersion Include="FluentAssertions" Version="5.10.3" />
     <PackageVersion Include="IPAddressRange" Version="6.1.0" />
-    <PackageVersion Include="Polly" Version="8.5.1" />
+    <PackageVersion Include="Polly" Version="8.5.2" />
     <PackageVersion Include="Servarr.FluentMigrator.Runner" Version="3.3.2.9" />
     <PackageVersion Include="Servarr.FluentMigrator.Runner.SQLite" Version="3.3.2.9" />
     <PackageVersion Include="Servarr.FluentMigrator.Runner.Postgres" Version="3.3.2.9" />
@@ -48,7 +48,7 @@
     <PackageVersion Include="Selenium.WebDriver.ChromeDriver" Version="91.0.4472.10100" />
     <PackageVersion Include="Sentry" Version="4.0.2" />
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />
-    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.6" />
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.7" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
     <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2" />
