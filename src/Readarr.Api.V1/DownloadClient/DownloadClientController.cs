@@ -1,3 +1,4 @@
+using FluentValidation;
 using NzbDrone.Core.Download;
 using Readarr.Http;
 
@@ -12,6 +13,7 @@ namespace Readarr.Api.V1.DownloadClient
         public DownloadClientController(IDownloadClientFactory downloadClientFactory)
             : base(downloadClientFactory, "downloadclient", ResourceMapper, BulkResourceMapper)
         {
+            SharedValidator.RuleFor(c => c.Priority).InclusiveBetween(1, 50);
         }
     }
 }
