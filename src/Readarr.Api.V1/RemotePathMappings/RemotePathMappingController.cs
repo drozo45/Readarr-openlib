@@ -30,8 +30,11 @@ namespace Readarr.Api.V1.RemotePathMappings
             SharedValidator.RuleFor(c => c.LocalPath)
                 .Cascade(CascadeMode.Stop)
                 .IsValidPath()
-                           .SetValidator(mappedNetworkDriveValidator)
-                           .SetValidator(pathExistsValidator);
+                .SetValidator(mappedNetworkDriveValidator)
+                .SetValidator(pathExistsValidator)
+                .SetValidator(new SystemFolderValidator())
+                .NotEqual("/")
+                .WithMessage("Cannot be set to '/'");
         }
 
         protected override RemotePathMappingResource GetResourceById(int id)
@@ -40,7 +43,8 @@ namespace Readarr.Api.V1.RemotePathMappings
         }
 
         [RestPostById]
-        public ActionResult<RemotePathMappingResource> CreateMapping(RemotePathMappingResource resource)
+        [Consumes("application/json")]
+        public ActionResult<RemotePathMappingResource> CreateMapping([FromBody] RemotePathMappingResource resource)
         {
             var model = resource.ToModel();
 
@@ -48,6 +52,7 @@ namespace Readarr.Api.V1.RemotePathMappings
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public List<RemotePathMappingResource> GetMappings()
         {
             return _remotePathMappingService.All().ToResource();
@@ -60,7 +65,7 @@ namespace Readarr.Api.V1.RemotePathMappings
         }
 
         [RestPutById]
-        public ActionResult<RemotePathMappingResource> UpdateMapping(RemotePathMappingResource resource)
+        public ActionResult<RemotePathMappingResource> UpdateMapping([FromBody] RemotePathMappingResource resource)
         {
             var mapping = resource.ToModel();
 
