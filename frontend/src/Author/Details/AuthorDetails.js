@@ -7,6 +7,7 @@ import AuthorHistoryTable from 'Author/History/AuthorHistoryTable';
 import MonitoringOptionsModal from 'Author/MonitoringOptions/MonitoringOptionsModal';
 import BookEditorFooter from 'Book/Editor/BookEditorFooter';
 import BookFileEditorTable from 'BookFile/Editor/BookFileEditorTable';
+import Alert from 'Components/Alert';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
@@ -17,7 +18,7 @@ import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import SwipeHeaderConnector from 'Components/Swipe/SwipeHeaderConnector';
-import { align, icons } from 'Helpers/Props';
+import { align, icons, kinds } from 'Helpers/Props';
 import InteractiveSearchFilterMenuConnector from 'InteractiveSearch/InteractiveSearchFilterMenuConnector';
 import InteractiveSearchTable from 'InteractiveSearch/InteractiveSearchTable';
 import OrganizePreviewModalConnector from 'Organize/OrganizePreviewModalConnector';
@@ -412,22 +413,25 @@ class AuthorDetails extends Component {
 
           <div className={styles.contentContainer}>
             {
-              !isPopulated && !booksError && !bookFilesError &&
-                <LoadingIndicator />
+              !isPopulated && !booksError && !bookFilesError ?
+                <LoadingIndicator /> :
+                null
             }
 
             {
-              !isFetching && booksError &&
-                <div>
+              !isFetching && booksError ?
+                <Alert kind={kinds.DANGER}>
                   {translate('LoadingBooksFailed')}
-                </div>
+                </Alert> :
+                null
             }
 
             {
-              !isFetching && bookFilesError &&
-                <div>
+              !isFetching && bookFilesError ?
+                <Alert kind={kinds.DANGER}>
                   {translate('LoadingBookFilesFailed')}
-                </div>
+                </Alert> :
+                null
             }
 
             {
