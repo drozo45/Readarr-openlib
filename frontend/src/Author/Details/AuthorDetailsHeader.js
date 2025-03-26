@@ -11,7 +11,7 @@ import MonitorToggleButton from 'Components/MonitorToggleButton';
 import Popover from 'Components/Tooltip/Popover';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
-import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
+import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
 import fonts from 'Styles/Variables/fonts';
 import formatBytes from 'Utilities/Number/formatBytes';
 import stripHtml from 'Utilities/String/stripHtml';
@@ -213,7 +213,7 @@ class AuthorDetailsHeader extends Component {
 
                 <span className={styles.qualityProfileName}>
                   {
-                    <QualityProfileNameConnector
+                    <QualityProfileName
                       qualityProfileId={qualityProfileId}
                     />
                   }
