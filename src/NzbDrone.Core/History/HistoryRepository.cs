@@ -116,6 +116,7 @@ namespace NzbDrone.Core.History
         {
             var builder = Builder()
                 .Join<EntityHistory, Author>((h, a) => h.AuthorId == a.Id)
+                .LeftJoin<EntityHistory, Book>((h, b) => h.BookId == b.Id)
                 .Where<EntityHistory>(x => x.Date >= date);
 
             if (eventType.HasValue)
@@ -123,9 +124,10 @@ namespace NzbDrone.Core.History
                 builder.Where<EntityHistory>(h => h.EventType == eventType);
             }
 
-            return _database.QueryJoined<EntityHistory, Author>(builder, (history, author) =>
+            return _database.QueryJoined<EntityHistory, Author, Book>(builder, (history, author, book) =>
             {
                 history.Author = author;
+                history.Book = book;
                 return history;
             }).OrderBy(h => h.Date).ToList();
         }
