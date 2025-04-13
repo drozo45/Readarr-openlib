@@ -97,7 +97,7 @@ namespace NzbDrone.Core.MediaFiles.BookImport
             var iDecision = 1;
             foreach (var bookDecision in bookDecisions)
             {
-                _logger.ProgressInfo($"Importing book {iDecision++}/{bookDecisions.Count} {bookDecision.First().Item.Book}");
+                _logger.ProgressInfo("Importing book {0}/{1} {2}", iDecision++, bookDecisions.Count, bookDecision.First().Item.Book);
 
                 var decisionList = bookDecision.ToList();
 
@@ -130,7 +130,7 @@ namespace NzbDrone.Core.MediaFiles.BookImport
                 //     RemoveExistingTrackFiles(author, book);
                 // }
 
-                // make sure part numbers are populated for audio books
+                // Make sure part numbers are populated for audiobooks
                 // If all audio files and all part numbers are zero, set them by filename order
                 if (decisionList.All(b => MediaFileExtensions.AudioExtensions.Contains(Path.GetExtension(b.Item.Path)) && b.Item.Part == 0))
                 {
@@ -147,7 +147,7 @@ namespace NzbDrone.Core.MediaFiles.BookImport
                 book.Editions = _editionService.SetMonitored(newRelease);
 
                 // Publish book edited event.
-                // Deliberatly don't put in the old book since we don't want to trigger an AuthorScan.
+                // Deliberately don't put in the old book since we don't want to trigger an AuthorScan.
                 _eventAggregator.PublishEvent(new BookEditedEvent(book, book));
             }
 
@@ -158,8 +158,8 @@ namespace NzbDrone.Core.MediaFiles.BookImport
                 .SelectMany(c => c)
                 .ToList();
 
-            _logger.ProgressInfo($"Importing {qualifiedImports.Count} files");
-            _logger.Debug($"Importing {qualifiedImports.Count} files. replaceExisting: {replaceExisting}");
+            _logger.ProgressInfo("Importing {0} files", qualifiedImports.Count);
+            _logger.Debug("Importing {0} files. Replace existing: {1}", qualifiedImports.Count, replaceExisting);
 
             var filesToAdd = new List<BookFile>(qualifiedImports.Count);
             var trackImportedEvents = new List<TrackImportedEvent>(qualifiedImports.Count);
@@ -310,7 +310,7 @@ namespace NzbDrone.Core.MediaFiles.BookImport
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             _mediaFileService.AddMany(filesToAdd);
-            _logger.Debug($"Inserted new trackfiles in {watch.ElapsedMilliseconds}ms");
+            _logger.Debug("Inserted new trackfiles in {0}ms", watch.ElapsedMilliseconds);
 
             // now that trackfiles have been inserted and ids generated, publish the import events
             foreach (var trackImportedEvent in trackImportedEvents)
@@ -354,7 +354,7 @@ namespace NzbDrone.Core.MediaFiles.BookImport
 
             if (booksToRefresh.Any())
             {
-                _logger.Debug($"Refreshing info for {booksToRefresh.Count} new books");
+                _logger.Debug("Refreshing info for {0} new books", booksToRefresh.Count);
                 _commandQueueManager.Push(new BulkRefreshBookCommand(booksToRefresh.Select(x => x.Id).ToList()));
             }
 
@@ -371,7 +371,8 @@ namespace NzbDrone.Core.MediaFiles.BookImport
 
                 if (dbAuthor == null)
                 {
-                    _logger.Debug($"Adding remote author {author}");
+                    _logger.Debug("Adding remote author {0}", author);
+
                     var path = decisions.First().Item.Path;
                     var rootFolder = _rootFolderService.GetBestRootFolder(path);
 
@@ -438,7 +439,7 @@ namespace NzbDrone.Core.MediaFiles.BookImport
 
                 if (dbBook == null)
                 {
-                    _logger.Debug($"Adding remote book {book}");
+                    _logger.Debug("Adding remote book {0}", book);
 
                     if (book.AuthorMetadataId == 0)
                     {
@@ -497,7 +498,8 @@ namespace NzbDrone.Core.MediaFiles.BookImport
 
                 if (dbEdition == null)
                 {
-                    _logger.Debug($"Adding remote edition {edition}");
+                    _logger.Debug("Adding remote edition {0}", edition);
+
                     try
                     {
                         edition.BookId = book.Id;
@@ -540,7 +542,7 @@ namespace NzbDrone.Core.MediaFiles.BookImport
             var rootFolder = _diskProvider.GetParentFolder(author.Path);
             var previousFiles = _mediaFileService.GetFilesByBook(book.Id);
 
-            _logger.Debug($"Deleting {previousFiles.Count} existing files for {book}");
+            _logger.Debug("Deleting {0} existing files for {1}", previousFiles.Count, book);
 
             foreach (var previousFile in previousFiles)
             {
