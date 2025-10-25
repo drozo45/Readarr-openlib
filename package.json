@@ -6,6 +6,7 @@
     "build": "webpack --config ./frontend/build/webpack.config.js",
     "prebuild": "yarn clean",
     "clean": "rimraf ./_output/UI && rimraf --glob \"**/*.js.map\"",
+    "dev": "webpack serve --config ./frontend/build/webpack.config.js --port 5000 --host 0.0.0.0",
     "start": "webpack --watch --config ./frontend/build/webpack.config.js",
     "watch": "webpack --watch --config ./frontend/build/webpack.config.js",
     "lint": "eslint --config frontend/.eslintrc.js --ignore-path frontend/.eslintignore frontend/",
@@ -138,6 +139,7 @@
     "url-loader": "4.1.1",
     "webpack": "5.95.0",
     "webpack-cli": "5.1.4",
+    "webpack-dev-server": "4.15.2",
     "webpack-livereload-plugin": "3.0.2",
     "worker-loader": "3.0.8"
   },

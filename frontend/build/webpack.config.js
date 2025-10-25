@@ -85,6 +85,31 @@ module.exports = (env) => {
       topLevelAwait: true
     },
 
+    devServer: {
+      static: {
+        directory: distFolder,
+        publicPath: '/'
+      },
+      historyApiFallback: true,
+      port: 5000,
+      host: '0.0.0.0',
+      allowedHosts: 'all',
+      proxy: [
+        {
+          context: ['/api', '/signalr', '/ping', '/initialize.json', '/Content', '/logout', '/login'],
+          target: 'http://localhost:8787',
+          changeOrigin: true,
+          secure: false
+        }
+      ],
+      client: {
+        overlay: {
+          errors: true,
+          warnings: false
+        }
+      }
+    },
+
     plugins: [
       new webpack.DefinePlugin({
         __DEV__: !isProduction,
