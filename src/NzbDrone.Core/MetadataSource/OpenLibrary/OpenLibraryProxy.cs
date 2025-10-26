@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using NLog;
 using NzbDrone.Common.Extensions;
@@ -13,8 +14,9 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
 {
     public interface IOpenLibraryProxy
     {
-        Book GetBookInfo(string foreignEditionId, bool useCache = true);
+        Book GetBookInfo(string foreignBookId, bool useCache = true);
         Author GetAuthorInfo(string foreignAuthorId, bool useCache = true);
+        OpenLibraryWorkResource GetWorkInfo(string foreignWorkId, bool useCache = true);
         List<Book> SearchForNewBook(string title, string author, bool getAllEditions = true);
     }
 
@@ -69,12 +71,12 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
             return MapAuthor(resource);
         }
 
-        public Book GetBookInfo(string foreignEditionId, bool useCache = true)
+        public OpenLibraryWorkResource GetWorkInfo(string foreignWorkId, bool useCache = true)
         {
-            _logger.Debug("Getting Book with OpenLibrary Edition ID of {0}", foreignEditionId);
+            _logger.Debug("Getting Work with OpenLibrary ID of {0}", foreignWorkId);
 
             var httpRequest = _requestBuilder.Create()
-                .SetSegment("route", $"books/{foreignEditionId}")
+                .SetSegment("route", $"works/{foreignWorkId}")
                 .Build();
 
             httpRequest.AllowAutoRedirect = true;
@@ -86,7 +88,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
             {
                 if (httpResponse.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new NotFoundException($"Book edition {foreignEditionId} not found");
+                    throw new NotFoundException($"Work {foreignWorkId} not found");
                 }
                 else
                 {
@@ -94,9 +96,48 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                 }
             }
 
-            var resource = httpResponse.Deserialize<OpenLibraryEditionResource>();
+            return httpResponse.Deserialize<OpenLibraryWorkResource>();
+        }
 
-            return MapBook(resource);
+        public Book GetBookInfo(string foreignBookId, bool useCache = true)
+        {
+            _logger.Debug("Getting Book/Work with OpenLibrary ID of {0}", foreignBookId);
+
+            // Try as work first (most common case from search)
+            try
+            {
+                var workResource = GetWorkInfo(foreignBookId, useCache);
+                return MapWorkToBook(workResource, useCache);
+            }
+            catch (NotFoundException)
+            {
+                _logger.Debug("ID {0} not found as work, trying as edition", foreignBookId);
+            }
+
+            // Try as edition
+            var httpRequest = _requestBuilder.Create()
+                .SetSegment("route", $"books/{foreignBookId}")
+                .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _cachedHttpClient.Get(httpRequest, useCache, TimeSpan.FromDays(90));
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new NotFoundException($"Book/Work {foreignBookId} not found");
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            var editionResource = httpResponse.Deserialize<OpenLibraryEditionResource>();
+            return MapEditionToBook(editionResource, useCache);
         }
 
         public List<Book> SearchForNewBook(string title, string author, bool getAllEditions = true)
@@ -145,7 +186,6 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                 Overview = GetBioText(resource.Bio)
             };
 
-            // Set author metadata
             var metadata = new AuthorMetadata
             {
                 ForeignAuthorId = author.ForeignAuthorId,
@@ -161,25 +201,130 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
             return author;
         }
 
-        private Book MapBook(OpenLibraryEditionResource resource)
+        private Book MapWorkToBook(OpenLibraryWorkResource workResource, bool useCache)
         {
+            var workId = workResource.Key?.Replace("/works/", "");
+            
             var book = new Book
             {
-                ForeignBookId = resource.Key?.Replace("/books/", ""),
-                Title = resource.Title,
-                ReleaseDate = TryParseDate(resource.PublishDate)
+                ForeignBookId = workId,
+                Title = workResource.Title,
+                Overview = GetDescriptionText(workResource.Description),
+                ReleaseDate = TryParseDate(workResource.FirstPublishDate)
             };
 
-            // Create edition
+            // Get author info
+            if (workResource.Authors != null && workResource.Authors.Count > 0)
+            {
+                var firstAuthor = workResource.Authors[0];
+                if (firstAuthor.Author?.Key != null)
+                {
+                    var authorId = firstAuthor.Author.Key.Replace("/authors/", "");
+                    try
+                    {
+                        var author = GetAuthorInfo(authorId, useCache);
+                        book.Author = new LazyLoaded<Author>(author);
+                        book.AuthorMetadata = new LazyLoaded<AuthorMetadata>(author.Metadata.Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn(ex, "Failed to fetch author {0} for work {1}", authorId, workId);
+                    }
+                }
+            }
+
+            // Create a basic edition for the work
             var edition = new Edition
             {
-                ForeignEditionId = book.ForeignBookId,
-                Title = resource.Title,
-                Isbn13 = resource.Isbn13?.FirstOrDefault(),
-                Publisher = resource.Publishers?.FirstOrDefault(),
+                ForeignEditionId = workId,
+                Title = workResource.Title,
+                Monitored = true
+            };
+
+            book.Editions = new List<Edition> { edition };
+
+            return book;
+        }
+
+        private Book MapEditionToBook(OpenLibraryEditionResource editionResource, bool useCache)
+        {
+            var editionId = editionResource.Key?.Replace("/books/", "");
+            
+            var book = new Book
+            {
+                ForeignBookId = editionId,
+                Title = editionResource.Title,
+                ReleaseDate = TryParseDate(editionResource.PublishDate)
+            };
+
+            // Get work info if available
+            if (editionResource.Works != null && editionResource.Works.Count > 0)
+            {
+                var workId = editionResource.Works[0].Key?.Replace("/works/", "");
+                if (!string.IsNullOrWhiteSpace(workId))
+                {
+                    try
+                    {
+                        var workResource = GetWorkInfo(workId, useCache);
+                        book.Overview = GetDescriptionText(workResource.Description);
+                        book.ForeignBookId = workId;
+                        
+                        // Get author from work
+                        if (workResource.Authors != null && workResource.Authors.Count > 0)
+                        {
+                            var firstAuthor = workResource.Authors[0];
+                            if (firstAuthor.Author?.Key != null)
+                            {
+                                var authorId = firstAuthor.Author.Key.Replace("/authors/", "");
+                                try
+                                {
+                                    var author = GetAuthorInfo(authorId, useCache);
+                                    book.Author = new LazyLoaded<Author>(author);
+                                    book.AuthorMetadata = new LazyLoaded<AuthorMetadata>(author.Metadata.Value);
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.Warn(ex, "Failed to fetch author {0}", authorId);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn(ex, "Failed to fetch work {0} for edition {1}", workId, editionId);
+                    }
+                }
+            }
+
+            // If no author from work, try edition authors
+            if (book.Author?.Value == null && editionResource.Authors != null && editionResource.Authors.Count > 0)
+            {
+                var authorId = editionResource.Authors[0].Key?.Replace("/authors/", "");
+                if (!string.IsNullOrWhiteSpace(authorId))
+                {
+                    try
+                    {
+                        var author = GetAuthorInfo(authorId, useCache);
+                        book.Author = new LazyLoaded<Author>(author);
+                        book.AuthorMetadata = new LazyLoaded<AuthorMetadata>(author.Metadata.Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn(ex, "Failed to fetch author {0}", authorId);
+                    }
+                }
+            }
+
+            var edition = new Edition
+            {
+                ForeignEditionId = editionId,
+                Title = editionResource.Title,
+                Isbn13 = editionResource.Isbn13?.FirstOrDefault(),
+                Publisher = editionResource.Publishers?.FirstOrDefault(),
                 ReleaseDate = book.ReleaseDate,
-                PageCount = resource.NumberOfPages ?? 0,
-                Format = resource.PhysicalFormat ?? resource.Format
+                PageCount = editionResource.NumberOfPages ?? 0,
+                Format = editionResource.PhysicalFormat ?? editionResource.Format,
+                Monitored = true
             };
 
             book.Editions = new List<Edition> { edition };
@@ -194,53 +339,70 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                 return null;
             }
 
+            var workId = searchDoc.Key.Replace("/works/", "");
+            
             var book = new Book
             {
-                ForeignBookId = searchDoc.Key.Replace("/works/", ""),
+                ForeignBookId = workId,
                 Title = searchDoc.Title,
                 ReleaseDate = searchDoc.FirstPublishYear.HasValue ? new DateTime(searchDoc.FirstPublishYear.Value, 1, 1) : null
             };
 
-            // Set author if available
+            // Set author if available (lightweight, don't fetch full details in search)
             if (searchDoc.AuthorName != null && searchDoc.AuthorName.Count > 0 && 
                 searchDoc.AuthorKey != null && searchDoc.AuthorKey.Count > 0)
             {
+                var authorId = searchDoc.AuthorKey[0].Replace("/authors/", "");
+                var authorName = searchDoc.AuthorName[0];
+                
                 var author = new Author
                 {
-                    ForeignAuthorId = searchDoc.AuthorKey[0].Replace("/authors/", ""),
-                    Name = searchDoc.AuthorName[0]
+                    ForeignAuthorId = authorId,
+                    Name = authorName
                 };
 
-                book.Author = new LazyLoaded<Author>(author);
-                book.AuthorMetadata = new LazyLoaded<AuthorMetadata>(new AuthorMetadata
+                var metadata = new AuthorMetadata
                 {
-                    ForeignAuthorId = author.ForeignAuthorId,
-                    Name = author.Name
-                });
+                    ForeignAuthorId = authorId,
+                    Name = authorName
+                };
+
+                author.Metadata = new LazyLoaded<AuthorMetadata>(metadata);
+                book.Author = new LazyLoaded<Author>(author);
+                book.AuthorMetadata = new LazyLoaded<AuthorMetadata>(metadata);
             }
+
+            // Create basic edition
+            var edition = new Edition
+            {
+                ForeignEditionId = workId,
+                Title = searchDoc.Title,
+                Monitored = true
+            };
+
+            book.Editions = new List<Edition> { edition };
 
             return book;
         }
 
-        private string GetBioText(object bio)
+        private string GetDescriptionText(object description)
         {
-            if (bio == null)
+            if (description == null)
             {
                 return null;
             }
 
-            // Bio can be a string or an object with a "value" property
-            if (bio is string bioText)
+            if (description is string descText)
             {
-                return bioText;
+                return descText;
             }
 
             try
             {
-                var bioDict = bio as Dictionary<string, object>;
-                if (bioDict != null && bioDict.ContainsKey("value"))
+                var descDict = description as Dictionary<string, object>;
+                if (descDict != null && descDict.ContainsKey("value"))
                 {
-                    return bioDict["value"]?.ToString();
+                    return descDict["value"]?.ToString();
                 }
             }
             catch
@@ -248,7 +410,12 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                 // Ignore parsing errors
             }
 
-            return bio.ToString();
+            return description.ToString();
+        }
+
+        private string GetBioText(object bio)
+        {
+            return GetDescriptionText(bio);
         }
 
         private DateTime? TryParseDate(string dateString)
