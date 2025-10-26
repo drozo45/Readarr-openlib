@@ -60,7 +60,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
             {
                 if (httpResponse.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new NotFoundException($"Author {foreignAuthorId} not found");
+                    throw new AuthorNotFoundException($"Author {foreignAuthorId} not found");
                 }
                 else
                 {
