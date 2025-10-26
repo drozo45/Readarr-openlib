@@ -1,0 +1,18 @@
+#18 19.17 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.32.1 /usr/local/share/perl/5.32.1 /usr/lib/aarch64-linux-gnu/perl5/5.32 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.32 /usr/share/perl/5.32 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#18 19.17 debconf: falling back to frontend: Teletype
+#18 19.58 Setting up libfontconfig1:arm64 (2.13.1-4.2) ...
+#18 CANCELED
+------
+ > [readarr backend-build 5/6] RUN dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64:
+18.12 /src/Readarr.Http/Readarr.Http.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.SQLite. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+18.12 /src/Readarr.Http/Readarr.Http.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.Postgres. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+18.12 /src/Readarr.Http/Readarr.Http.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+18.37   Failed to restore /src/NzbDrone.Host/Readarr.Host.csproj (in 16.42 sec).
+18.37   The project /src/NzbDrone.Common/Readarr.Common.csproj is using CentralPackageVersionManagement, a NuGet preview feature.
+18.37   Failed to restore /src/Readarr.Api.V1/Readarr.Api.V1.csproj (in 503 ms).
+18.38   Failed to restore /src/NzbDrone.Console/Readarr.Console.csproj (in 16.43 sec).
+18.38   Failed to restore /src/Readarr.Http/Readarr.Http.csproj (in 16.43 sec).
+18.38 /src/NzbDrone.Common/Readarr.Common.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+18.41   Failed to restore /src/NzbDrone.Common/Readarr.Common.csproj (in 35 ms).
+------
+failed to solve: 
