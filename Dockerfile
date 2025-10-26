@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS backend-build
 
 WORKDIR /src
 
-# Copy solution and project files
+# Copy solution and project files (production projects)
 COPY src/*.sln ./
 COPY src/Directory.Build.props ./
 COPY src/NzbDrone/*.csproj ./NzbDrone/
@@ -20,6 +20,20 @@ COPY src/NzbDrone.Mono/*.csproj ./NzbDrone.Mono/
 COPY src/NzbDrone.Windows/*.csproj ./NzbDrone.Windows/
 COPY src/ServiceHelpers/ServiceInstall/*.csproj ./ServiceHelpers/ServiceInstall/
 COPY src/ServiceHelpers/ServiceUninstall/*.csproj ./ServiceHelpers/ServiceUninstall/
+
+# Copy test projects (required by solution file)
+COPY src/NzbDrone.Common.Test/*.csproj ./NzbDrone.Common.Test/
+COPY src/NzbDrone.Core.Test/*.csproj ./NzbDrone.Core.Test/
+COPY src/NzbDrone.Host.Test/*.csproj ./NzbDrone.Host.Test/
+COPY src/NzbDrone.Integration.Test/*.csproj ./NzbDrone.Integration.Test/
+COPY src/NzbDrone.Libraries.Test/*.csproj ./NzbDrone.Libraries.Test/
+COPY src/NzbDrone.Mono.Test/*.csproj ./NzbDrone.Mono.Test/
+COPY src/NzbDrone.Test.Common/*.csproj ./NzbDrone.Test.Common/
+COPY src/NzbDrone.Test.Dummy/*.csproj ./NzbDrone.Test.Dummy/
+COPY src/NzbDrone.Update.Test/*.csproj ./NzbDrone.Update.Test/
+COPY src/NzbDrone.Windows.Test/*.csproj ./NzbDrone.Windows.Test/
+COPY src/NzbDrone.Automation.Test/*.csproj ./NzbDrone.Automation.Test/
+COPY src/NzbDrone.Api.Test/*.csproj ./NzbDrone.Api.Test/
 
 # Restore dependencies
 COPY src/NuGet.config ./
@@ -40,11 +54,13 @@ RUN dotnet publish NzbDrone.Console/Readarr.Console.csproj \
 # Stage 2: Build frontend (optional, can be skipped for backend-only)
 FROM node:16-alpine AS frontend-build
 
-WORKDIR /src
+WORKDIR /build
 
-# Copy frontend files
+# Copy frontend package files from root
 COPY package.json yarn.lock ./
-COPY frontend/ ./frontend/
+
+# Copy frontend source code
+COPY frontend ./frontend
 
 # Install and build (with fallback to skip if it fails)
 RUN yarn install --frozen-lockfile --network-timeout 120000 || echo "Frontend dependencies skipped"
@@ -70,7 +86,7 @@ WORKDIR /app
 COPY --from=backend-build /app ./
 
 # Copy frontend from build stage (if available)
-COPY --from=frontend-build /src/_output/UI ./UI/ 2>/dev/null || echo "No frontend UI copied"
+COPY --from=frontend-build /build/_output/UI ./UI/ 2>/dev/null || echo "No frontend UI copied"
 
 # Create config directory
 RUN mkdir -p /config && chown -R readarr:readarr /config /app
