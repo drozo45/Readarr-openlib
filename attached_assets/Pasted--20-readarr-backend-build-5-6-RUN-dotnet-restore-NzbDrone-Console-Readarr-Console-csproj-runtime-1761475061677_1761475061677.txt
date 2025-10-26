@@ -1,0 +1,52 @@
+#20 [readarr backend-build 5/6] RUN dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64
+#20 21.93 /src/NzbDrone.Common/Readarr.Common.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.07   Failed to restore /src/NzbDrone.Common/Readarr.Common.csproj (in 20.3 sec).
+#20 22.07   The project /src/Readarr.Api.V1/Readarr.Api.V1.csproj is using CentralPackageVersionManagement, a NuGet preview feature.
+#20 22.46 /src/Readarr.Api.V1/Readarr.Api.V1.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/NzbDrone.Host/Readarr.Host.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/Readarr.Http/Readarr.Http.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/NzbDrone.Host/Readarr.Host.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/Readarr.Api.V1/Readarr.Api.V1.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/NzbDrone.Host/Readarr.Host.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.SQLite. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/Readarr.Http/Readarr.Http.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.SQLite. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/Readarr.Api.V1/Readarr.Api.V1.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.SQLite. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/NzbDrone.Host/Readarr.Host.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.Postgres. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/Readarr.Http/Readarr.Http.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.Postgres. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/Readarr.Api.V1/Readarr.Api.V1.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.Postgres. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.46 /src/Readarr.Http/Readarr.Http.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.47 /src/NzbDrone.Console/Readarr.Console.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org
+#20 22.47 /src/NzbDrone.Console/Readarr.Console.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner. No packages exist with this id in source(s): nuget.org
+#20 22.47 /src/NzbDrone.Console/Readarr.Console.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.SQLite. No packages exist with this id in source(s): nuget.org
+#20 22.47 /src/NzbDrone.Console/Readarr.Console.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.Postgres. No packages exist with this id in source(s): nuget.org
+#20 22.73   Failed to restore /src/Readarr.Api.V1/Readarr.Api.V1.csproj (in 652 ms).
+#20 22.74   The project /src/NzbDrone.SignalR/Readarr.SignalR.csproj is using CentralPackageVersionManagement, a NuGet preview feature.
+#20 22.74   Failed to restore /src/Readarr.Http/Readarr.Http.csproj (in 20.96 sec).
+#20 22.74   Failed to restore /src/NzbDrone.Host/Readarr.Host.csproj (in 20.97 sec).
+#20 22.74   The project /src/NzbDrone.Core/Readarr.Core.csproj is using CentralPackageVersionManagement, a NuGet preview feature.
+#20 22.74   Failed to restore /src/NzbDrone.Console/Readarr.Console.csproj (in 20.97 sec).
+#20 22.75 /src/NzbDrone.SignalR/Readarr.SignalR.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.75 /src/NzbDrone.SignalR/Readarr.SignalR.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.SQLite. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.75 /src/NzbDrone.SignalR/Readarr.SignalR.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.Postgres. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.75 /src/NzbDrone.SignalR/Readarr.SignalR.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.75 /src/NzbDrone.Core/Readarr.Core.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.75 /src/NzbDrone.Core/Readarr.Core.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.SQLite. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.75 /src/NzbDrone.Core/Readarr.Core.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.Postgres. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.75 /src/NzbDrone.Core/Readarr.Core.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+#20 22.80   Failed to restore /src/NzbDrone.SignalR/Readarr.SignalR.csproj (in 62 ms).
+#20 22.81   Failed to restore /src/NzbDrone.Core/Readarr.Core.csproj (in 67 ms).
+#20 ERROR: process "/bin/sh -c dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64" did not complete successfully: exit code: 1
+------
+ > [readarr backend-build 5/6] RUN dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64:
+22.75 /src/NzbDrone.SignalR/Readarr.SignalR.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+22.75 /src/NzbDrone.SignalR/Readarr.SignalR.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.SQLite. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+22.75 /src/NzbDrone.SignalR/Readarr.SignalR.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.Postgres. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+22.75 /src/NzbDrone.SignalR/Readarr.SignalR.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+22.75 /src/NzbDrone.Core/Readarr.Core.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+22.75 /src/NzbDrone.Core/Readarr.Core.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.SQLite. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+22.75 /src/NzbDrone.Core/Readarr.Core.csproj : error NU1101: Unable to find package Servarr.FluentMigrator.Runner.Postgres. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+22.75 /src/NzbDrone.Core/Readarr.Core.csproj : error NU1101: Unable to find package System.Data.SQLite.Core.Servarr. No packages exist with this id in source(s): nuget.org [/src/NzbDrone.Console/Readarr.Console.csproj]
+22.80   Failed to restore /src/NzbDrone.SignalR/Readarr.SignalR.csproj (in 62 ms).
+22.81   Failed to restore /src/NzbDrone.Core/Readarr.Core.csproj (in 67 ms).
+------
+failed to solve: process "/bin/sh -c dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64" did not complete successfully: exit code: 1
+remo@Blacksmith Readarr-openlib % 
