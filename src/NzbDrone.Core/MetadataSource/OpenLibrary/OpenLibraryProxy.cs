@@ -5,6 +5,7 @@ using System.Net;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
+using NzbDrone.Common.Serializer;
 using NzbDrone.Core.Books;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Exceptions;
@@ -67,7 +68,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                 }
             }
 
-            var resource = httpResponse.Deserialize<OpenLibraryAuthorResource>();
+            var resource = Json.Deserialize<OpenLibraryAuthorResource>(httpResponse.Content);
 
             return MapAuthor(resource);
         }
@@ -89,7 +90,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
             {
                 if (httpResponse.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new NotFoundException($"Work {foreignWorkId} not found");
+                    throw new BookNotFoundException($"Work {foreignWorkId} not found");
                 }
                 else
                 {
@@ -97,7 +98,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                 }
             }
 
-            return httpResponse.Deserialize<OpenLibraryWorkResource>();
+            return Json.Deserialize<OpenLibraryWorkResource>(httpResponse.Content);
         }
 
         public Book GetBookInfo(string foreignBookId, bool useCache = true)
@@ -110,7 +111,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                 var workResource = GetWorkInfo(foreignBookId, useCache);
                 return MapWorkToBook(workResource, useCache);
             }
-            catch (NotFoundException)
+            catch (BookNotFoundException)
             {
                 _logger.Debug("ID {0} not found as work, trying as edition", foreignBookId);
             }
@@ -129,7 +130,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
             {
                 if (httpResponse.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new NotFoundException($"Book/Work {foreignBookId} not found");
+                    throw new BookNotFoundException($"Book/Work {foreignBookId} not found");
                 }
                 else
                 {
@@ -137,7 +138,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                 }
             }
 
-            var editionResource = httpResponse.Deserialize<OpenLibraryEditionResource>();
+            var editionResource = Json.Deserialize<OpenLibraryEditionResource>(httpResponse.Content);
             return MapEditionToBook(editionResource, useCache);
         }
 
