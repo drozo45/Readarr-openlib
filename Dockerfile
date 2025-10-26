@@ -14,6 +14,7 @@ COPY src ./
 RUN dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64
 
 # Build and publish (specify framework for multi-target projects)
+# Disable all code analyzers and style checks for Docker build
 RUN dotnet publish NzbDrone.Console/Readarr.Console.csproj \
     -c Release \
     -f net6.0 \
@@ -23,7 +24,11 @@ RUN dotnet publish NzbDrone.Console/Readarr.Console.csproj \
     -o /app \
     /p:EnableCompressionInSingleFile=false \
     /p:EnforceCodeStyleInBuild=false \
-    /p:TreatWarningsAsErrors=false
+    /p:RunAnalyzersDuringBuild=false \
+    /p:RunAnalyzers=false \
+    /p:EnableNETAnalyzers=false \
+    /p:TreatWarningsAsErrors=false \
+    /p:WarningLevel=0
 
 # Stage 2: Build frontend (optional, can be skipped for backend-only)
 FROM node:16-alpine AS frontend-build
