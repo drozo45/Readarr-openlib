@@ -62,9 +62,10 @@ COPY package.json yarn.lock ./
 # Copy frontend source code
 COPY frontend ./frontend
 
-# Install and build (with fallback to skip if it fails)
+# Install and build (with fallback to create empty dir if it fails)
 RUN yarn install --frozen-lockfile --network-timeout 120000 || echo "Frontend dependencies skipped"
-RUN yarn build --env production || echo "Frontend build skipped"
+RUN yarn build --env production || mkdir -p _output/UI
+RUN mkdir -p _output/UI || true
 
 # Stage 3: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
@@ -85,8 +86,8 @@ WORKDIR /app
 # Copy backend from build stage
 COPY --from=backend-build /app ./
 
-# Copy frontend from build stage (if available)
-COPY --from=frontend-build /build/_output/UI ./UI/ 2>/dev/null || echo "No frontend UI copied"
+# Copy frontend from build stage (directory always exists, may be empty)
+COPY --from=frontend-build /build/_output/UI ./UI/
 
 # Create config directory
 RUN mkdir -p /config && chown -R readarr:readarr /config /app
