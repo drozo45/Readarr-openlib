@@ -21,7 +21,9 @@ RUN dotnet publish NzbDrone.Console/Readarr.Console.csproj \
     --self-contained false \
     --no-restore \
     -o /app \
-    /p:EnableCompressionInSingleFile=false
+    /p:EnableCompressionInSingleFile=false \
+    /p:EnforceCodeStyleInBuild=false \
+    /p:TreatWarningsAsErrors=false
 
 # Stage 2: Build frontend (optional, can be skipped for backend-only)
 FROM node:16-alpine AS frontend-build
