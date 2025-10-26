@@ -31,11 +31,31 @@ The metadata source has been completely replaced from Goodreads to OpenLibrary A
 
 ### How It Works
 The OpenLibrary integration implements the same interfaces as the previous Goodreads implementation:
-- `ISearchForNewBook` - Search for books by title/author
+- `ISearchForNewBook` - Search for books by title/author, ISBN, ASIN
 - `IProvideAuthorInfo` - Get author metadata
 - `IProvideBookInfo` - Get book metadata
 - `ISearchForNewAuthor` - Search for authors
 - `ISearchForNewEntity` - General entity search
+
+#### Implementation Details
+1. **OpenLibrarySearchProxy** - Handles search queries using OpenLibrary's Search API
+2. **OpenLibraryProxy** - Core proxy that:
+   - Fetches book/work/edition data
+   - Resolves linked resources (authors, works)
+   - Handles both work IDs (`/works/OL123W`) and edition IDs (`/books/OL123M`)
+   - Automatically fetches and populates related author metadata
+3. **OpenLibraryBookInfoProxy** - Main entry point that implements all metadata interfaces
+
+#### Work vs Edition Handling
+OpenLibrary has a hierarchical structure: Work → Edition
+- **Works** represent the abstract book (e.g., "Harry Potter and the Philosopher's Stone")
+- **Editions** represent specific publications (e.g., UK hardcover 1997)
+
+The implementation:
+- Search results return work IDs (most common case)
+- `GetBookInfo()` tries work lookup first, falls back to edition
+- When fetching an edition, it also fetches the linked work for complete metadata
+- Authors are always fetched from the work level
 
 ### OpenLibrary API Endpoints Used
 - **Search**: `https://openlibrary.org/search.json?q={query}&limit=20`
@@ -92,11 +112,17 @@ Once the backend builds and runs:
 3. Test book lookup: `/api/v1/book/lookup?term=lord+of+the+rings`
 
 ## Original Goodreads Implementation
-The original Goodreads-based metadata source is still present in the codebase at:
-- `src/NzbDrone.Core/MetadataSource/Goodreads/`
-- `src/NzbDrone.Core/MetadataSource/GoodreadsSearchProxy/`
+The original Goodreads-based metadata source files are still present but disabled:
+- `src/NzbDrone.Core/MetadataSource/Goodreads/` - Goodreads API proxy
+- `src/NzbDrone.Core/MetadataSource/GoodreadsSearchProxy/` - Goodreads search
+- `src/NzbDrone.Core/MetadataSource/BookInfo/LegacyBookInfoProxy.cs.bak` - Original wrapper (renamed to prevent DI registration)
 
-These files have NOT been deleted but should no longer be used since the OpenLibrary implementation provides all the same functionality.
+The `BookInfoProxy` was renamed to `LegacyBookInfoProxy.cs.bak` to exclude it from DryIoc's auto-registration, ensuring only the OpenLibrary implementation is used.
+
+### Why Goodreads Was Replaced
+- Goodreads API was retired/deprecated
+- OpenLibrary provides a free, open alternative with good coverage
+- OpenLibrary has no API key requirements or rate limits (just user-agent)
 
 ## Architecture Notes
 - The project uses a clean architecture with separation between API, Core business logic, and HTTP layers

@@ -137,7 +137,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
             
             try
             {
-                // Search using ISBN directly - OpenLibrary's ISBN search returns editions
+                // Search using ISBN directly - OpenLibrary's ISBN search returns editions or works
                 var searchResults = _searchProxy.Search($"isbn:{isbn}");
                 var books = new List<Book>();
 
@@ -145,21 +145,13 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                 {
                     try
                     {
-                        // For ISBN search, use the edition key if available
-                        string bookId = null;
-                        
-                        // Check if we have an ISBN that matches
-                        if (result.Isbn != null && result.Isbn.Contains(isbn))
+                        // Normalize the key by stripping both work and edition prefixes
+                        if (!string.IsNullOrWhiteSpace(result.Key))
                         {
-                            // Prefer the work ID for consistent data model
-                            if (!string.IsNullOrWhiteSpace(result.Key))
-                            {
-                                bookId = result.Key.Replace("/works/", "");
-                            }
-                        }
+                            var bookId = result.Key
+                                .Replace("/works/", "")
+                                .Replace("/books/", "");
 
-                        if (!string.IsNullOrWhiteSpace(bookId))
-                        {
                             var book = _openLibraryProxy.GetBookInfo(bookId);
                             if (book != null)
                             {
