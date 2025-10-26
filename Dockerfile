@@ -7,6 +7,7 @@ WORKDIR /src
 # Copy solution and project files
 COPY src/*.sln ./
 COPY src/Directory.Build.props ./
+COPY src/NzbDrone/*.csproj ./NzbDrone/
 COPY src/NzbDrone.Core/*.csproj ./NzbDrone.Core/
 COPY src/NzbDrone.Common/*.csproj ./NzbDrone.Common/
 COPY src/NzbDrone.Host/*.csproj ./NzbDrone.Host/
@@ -17,6 +18,8 @@ COPY src/Readarr.Http/*.csproj ./Readarr.Http/
 COPY src/Readarr.Api.V1/*.csproj ./Readarr.Api.V1/
 COPY src/NzbDrone.Mono/*.csproj ./NzbDrone.Mono/
 COPY src/NzbDrone.Windows/*.csproj ./NzbDrone.Windows/
+COPY src/ServiceHelpers/ServiceInstall/*.csproj ./ServiceHelpers/ServiceInstall/
+COPY src/ServiceHelpers/ServiceUninstall/*.csproj ./ServiceHelpers/ServiceUninstall/
 
 # Restore dependencies
 COPY src/NuGet.config ./
