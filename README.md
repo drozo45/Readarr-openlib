@@ -1,6 +1,24 @@
 # ✨ OpenLibrary Integration Complete
 
-> **This fork has a working OpenLibrary metadata integration!** The community effort mentioned below is now complete. See [README-OPENLIBRARY.md](README-OPENLIBRARY.md) for details.
+> **This fork has a working OpenLibrary metadata integration!** The community effort mentioned below is now complete.
+
+## 🚀 Quick Start with Docker
+
+```bash
+docker-compose up -d
+# Access at http://localhost:8787
+```
+
+📖 **Documentation:**
+- [README-OPENLIBRARY.md](README-OPENLIBRARY.md) - Complete guide
+- [DOCKER.md](DOCKER.md) - Docker deployment
+- [QUICKREF.md](QUICKREF.md) - Quick reference
+
+**Features:**
+- ✅ OpenLibrary metadata (no API key needed)
+- ✅ Docker ready with health checks
+- ✅ ARM64 support (Raspberry Pi)
+- ✅ No rate limits or deprecated APIs
 
 ---
 

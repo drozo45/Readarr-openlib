@@ -1,0 +1,65 @@
+# Build outputs
+_output/
+_artifacts/
+_tests/
+**/bin/
+**/obj/
+**/_temp/
+
+# Node
+node_modules/
+**/node_modules/
+npm-debug.log
+yarn-error.log
+.yarn/
+.pnp.*
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.DS_Store
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!src/**/*.md
+docs/
+
+# Test files
+**/*.Test/
+**/*.Tests/
+**/test/
+**/tests/
+
+# CI/CD
+.github/
+.azure/
+.circleci/
+azure-pipelines.yml
+
+# Replit specific
+.replit
+replit.nix
+.breakpoints
+.upm/
+.cache/
+.config/
+
+# Build scripts (not needed in container)
+build.sh
+quick-start.sh
+
+# Other
+*.log
+*.tmp
+*.bak
+*~

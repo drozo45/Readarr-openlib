@@ -6,7 +6,21 @@ This is a fork of [Readarr](https://github.com/Readarr/Readarr) with the Goodrea
 
 ## ⚡ Quick Start
 
-### Option 1: Simple Build (Backend Only)
+### Option 1: Docker (Recommended)
+```bash
+# Using Docker Compose (easiest)
+docker-compose up -d
+
+# Or using the build script
+./docker-build.sh
+docker-compose up -d
+
+# Access at http://localhost:8787
+```
+
+**See [DOCKER.md](DOCKER.md) for complete Docker documentation.**
+
+### Option 2: Simple Build (Backend Only)
 ```bash
 chmod +x quick-start.sh
 ./quick-start.sh
@@ -17,13 +31,13 @@ Then run:
 ./_output/net6.0/linux-x64/Readarr/Readarr --nobrowser
 ```
 
-### Option 2: Full Build (Backend + Frontend)
+### Option 3: Full Build (Backend + Frontend)
 ```bash
 chmod +x build.sh
 ./build.sh --all
 ```
 
-### Option 3: Development Mode
+### Option 4: Development Mode
 ```bash
 cd src/NzbDrone.Console
 dotnet run -- --nobrowser
@@ -90,18 +104,29 @@ curl "http://localhost:8787/api/v1/author/lookup?term=frank+herbert"
 ## 📦 Self-Hosting
 
 ### Docker (Recommended)
-```bash
-# Build
-dotnet publish src/Readarr.sln -c Release -o ./publish
 
-# Run
+Complete Docker setup included! See [DOCKER.md](DOCKER.md) for full documentation.
+
+```bash
+# Quick start with Docker Compose
+docker-compose up -d
+
+# Or build manually
+./docker-build.sh
 docker run -d \
-  --name=readarr-openlibrary \
+  --name readarr-openlibrary \
   -p 8787:8787 \
-  -v /path/to/data:/config \
-  --restart unless-stopped \
-  /path/to/publish/Readarr
+  -v ./config:/config \
+  -v ./books:/books \
+  readarr-openlibrary:latest
 ```
+
+Features:
+- ✅ Multi-stage optimized build
+- ✅ Runs as non-root user (secure)
+- ✅ Health checks included
+- ✅ ARM64 support (Raspberry Pi)
+- ✅ Auto-restart on failure
 
 ### Systemd Service (Linux)
 ```bash
