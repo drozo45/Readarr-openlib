@@ -7,6 +7,9 @@ WORKDIR /src
 # Copy everything for dependency restore (for better layer caching, copy projects first)
 COPY src/Readarr.sln src/Directory.Build.props src/NuGet.config ./
 
+# Copy Logo directory (required for embedded resources)
+COPY Logo ../Logo
+
 # Copy all source (includes all .csproj files)
 COPY src ./
 

@@ -390,6 +390,13 @@ services:
 
 ### Common Issues
 
+**Build fails with "Could not find a part of the path '/Logo/64.png'":**
+This error occurs if the Logo directory is not copied into the Docker build context. The Dockerfile includes:
+```dockerfile
+COPY Logo ../Logo
+```
+This ensures the embedded resource files are available during compilation.
+
 **Container won't start:**
 ```bash
 # Check logs
