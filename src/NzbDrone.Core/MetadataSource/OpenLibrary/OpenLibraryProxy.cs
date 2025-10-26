@@ -267,7 +267,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
                     try
                     {
                         var workResource = GetWorkInfo(workId, useCache);
-                        book.Overview = GetDescriptionText(workResource.Description);
+                        // Note: Book model doesn't have Overview/Description property
                         book.ForeignBookId = workId;
                         
                         // Get author from work
