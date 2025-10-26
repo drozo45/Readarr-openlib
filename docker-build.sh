@@ -12,7 +12,15 @@ echo ""
 # Default values
 IMAGE_NAME="readarr-openlibrary"
 TAG="latest"
-PLATFORM="linux/amd64"
+
+# Auto-detect platform based on current architecture
+ARCH=$(uname -m)
+if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
+  PLATFORM="linux/arm64"
+else
+  PLATFORM="linux/amd64"
+fi
+
 NO_CACHE=""
 
 # Parse arguments
@@ -39,15 +47,16 @@ while [[ $# -gt 0 ]]; do
       echo ""
       echo "Options:"
       echo "  --tag, -t TAG         Set image tag (default: latest)"
-      echo "  --platform, -p PLAT   Set platform (default: linux/amd64)"
+      echo "  --platform, -p PLAT   Set platform (default: auto-detected)"
       echo "  --no-cache            Build without cache"
       echo "  --push                Push to registry after build"
       echo "  --help, -h            Show this help"
       echo ""
       echo "Examples:"
-      echo "  ./docker-build.sh"
+      echo "  ./docker-build.sh                       # Auto-detect platform"
       echo "  ./docker-build.sh --tag v1.0.0"
-      echo "  ./docker-build.sh --platform linux/arm64"
+      echo "  ./docker-build.sh --platform linux/amd64  # Force x86_64"
+      echo "  ./docker-build.sh --platform linux/arm64  # Force ARM64"
       exit 0
       ;;
     *)

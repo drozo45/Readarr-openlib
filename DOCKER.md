@@ -397,6 +397,23 @@ COPY Logo ../Logo
 ```
 This ensures the embedded resource files are available during compilation.
 
+**QEMU error: "Could not open '/lib64/ld-linux-x86-64.so.2'":**
+This means you built for x86_64 but are running on ARM64 (Apple Silicon). Solution:
+```bash
+# Remove old image
+docker rmi readarr-openlibrary:latest
+
+# Rebuild for your architecture (auto-detects)
+./docker-build.sh
+
+# Or force ARM64
+./docker-build.sh --platform linux/arm64
+
+# Run
+docker-compose up -d
+```
+See `ARCHITECTURE-FIX.md` for detailed fix.
+
 **Container won't start:**
 ```bash
 # Check logs

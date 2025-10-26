@@ -2,6 +2,10 @@
 # Stage 1: Build backend
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS backend-build
 
+# Detect architecture and set runtime identifier
+ARG TARGETARCH
+RUN echo "Building for architecture: ${TARGETARCH}"
+
 WORKDIR /src
 
 # Copy everything for dependency restore (for better layer caching, copy projects first)
@@ -14,24 +18,47 @@ COPY Logo ../Logo
 COPY src ./
 
 # Restore dependencies for the Console project only (avoids missing test projects)
-RUN dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64
+# Use TARGETARCH to determine runtime identifier (linux-x64 or linux-arm64)
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+      dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-arm64; \
+    else \
+      dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64; \
+    fi
 
 # Build and publish (specify framework for multi-target projects)
 # Disable all code analyzers and style checks for Docker build
-RUN dotnet publish NzbDrone.Console/Readarr.Console.csproj \
-    -c Release \
-    -f net6.0 \
-    -r linux-x64 \
-    --self-contained false \
-    --no-restore \
-    -o /app \
-    /p:EnableCompressionInSingleFile=false \
-    /p:EnforceCodeStyleInBuild=false \
-    /p:RunAnalyzersDuringBuild=false \
-    /p:RunAnalyzers=false \
-    /p:EnableNETAnalyzers=false \
-    /p:TreatWarningsAsErrors=false \
-    /p:WarningLevel=0
+# Use TARGETARCH to determine runtime identifier
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+      dotnet publish NzbDrone.Console/Readarr.Console.csproj \
+        -c Release \
+        -f net6.0 \
+        -r linux-arm64 \
+        --self-contained false \
+        --no-restore \
+        -o /app \
+        /p:EnableCompressionInSingleFile=false \
+        /p:EnforceCodeStyleInBuild=false \
+        /p:RunAnalyzersDuringBuild=false \
+        /p:RunAnalyzers=false \
+        /p:EnableNETAnalyzers=false \
+        /p:TreatWarningsAsErrors=false \
+        /p:WarningLevel=0; \
+    else \
+      dotnet publish NzbDrone.Console/Readarr.Console.csproj \
+        -c Release \
+        -f net6.0 \
+        -r linux-x64 \
+        --self-contained false \
+        --no-restore \
+        -o /app \
+        /p:EnableCompressionInSingleFile=false \
+        /p:EnforceCodeStyleInBuild=false \
+        /p:RunAnalyzersDuringBuild=false \
+        /p:RunAnalyzers=false \
+        /p:EnableNETAnalyzers=false \
+        /p:TreatWarningsAsErrors=false \
+        /p:WarningLevel=0; \
+    fi
 
 # Stage 2: Build frontend (optional, can be skipped for backend-only)
 FROM node:16-alpine AS frontend-build
