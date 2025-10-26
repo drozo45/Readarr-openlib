@@ -6,6 +6,7 @@ using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Books;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.Http;
 using NzbDrone.Core.MetadataSource.OpenLibrary.Resources;
