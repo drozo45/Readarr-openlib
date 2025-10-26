@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  readarr:
+    build: .
+    container_name: readarr-openlibrary
+    image: readarr-openlibrary:latest
+    restart: unless-stopped
+    
+    ports:
+      - "8787:8787"
+    
+    volumes:
+      # Config directory (database, logs, etc.)
+      - ./config:/config
+      # Books directory (optional - mount your book library)
+      - ./books:/books
+      # Downloads directory (optional - for integration with download clients)
+      - ./downloads:/downloads
+    
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - READARR_CONFIG=/config
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8787/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    # Optional: Resource limits
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2'
+    #       memory: 1G
+    #     reservations:
+    #       cpus: '0.5'
+    #       memory: 512M
+
+volumes:
+  config:
+    driver: local
+  books:
+    driver: local
+  downloads:
+    driver: local
