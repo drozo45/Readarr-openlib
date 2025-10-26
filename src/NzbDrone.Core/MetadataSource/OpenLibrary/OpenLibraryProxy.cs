@@ -183,15 +183,15 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
             var author = new Author
             {
                 ForeignAuthorId = resource.Key?.Replace("/authors/", ""),
-                Name = resource.Name,
-                Overview = GetBioText(resource.Bio)
+                Name = resource.Name
+                // Note: Author model doesn't have Overview, only AuthorMetadata does
             };
 
             var metadata = new AuthorMetadata
             {
                 ForeignAuthorId = author.ForeignAuthorId,
                 Name = author.Name,
-                Overview = author.Overview,
+                Overview = GetBioText(resource.Bio),
                 Aliases = resource.AlternateNames ?? new List<string>(),
                 Born = TryParseDate(resource.BirthDate),
                 Died = TryParseDate(resource.DeathDate)
@@ -210,7 +210,7 @@ namespace NzbDrone.Core.MetadataSource.OpenLibrary
             {
                 ForeignBookId = workId,
                 Title = workResource.Title,
-                Overview = GetDescriptionText(workResource.Description),
+                // Note: Book model doesn't have Overview/Description property
                 ReleaseDate = TryParseDate(workResource.FirstPublishDate)
             };
 
