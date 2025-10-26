@@ -13,7 +13,7 @@ COPY src/NzbDrone.Host/*.csproj ./NzbDrone.Host/
 COPY src/NzbDrone.Console/*.csproj ./NzbDrone.Console/
 COPY src/NzbDrone.Update/*.csproj ./NzbDrone.Update/
 COPY src/NzbDrone.SignalR/*.csproj ./NzbDrone.SignalR/
-COPY src/NzbDrone.Http/*.csproj ./NzbDrone.Http/
+COPY src/Readarr.Http/*.csproj ./Readarr.Http/
 COPY src/Readarr.Api.V1/*.csproj ./Readarr.Api.V1/
 COPY src/NzbDrone.Mono/*.csproj ./NzbDrone.Mono/
 COPY src/NzbDrone.Windows/*.csproj ./NzbDrone.Windows/
