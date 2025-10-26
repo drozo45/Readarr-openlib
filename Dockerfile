@@ -10,8 +10,8 @@ COPY src/Readarr.sln src/Directory.Build.props src/NuGet.config ./
 # Copy all source (includes all .csproj files)
 COPY src ./
 
-# Restore dependencies  
-RUN dotnet restore Readarr.sln --runtime linux-x64
+# Restore dependencies for the Console project only (avoids missing test projects)
+RUN dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64
 
 # Build and publish
 RUN dotnet publish NzbDrone.Console/Readarr.Console.csproj \
