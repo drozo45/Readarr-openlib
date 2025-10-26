@@ -13,9 +13,10 @@ COPY src ./
 # Restore dependencies for the Console project only (avoids missing test projects)
 RUN dotnet restore NzbDrone.Console/Readarr.Console.csproj --runtime linux-x64
 
-# Build and publish
+# Build and publish (specify framework for multi-target projects)
 RUN dotnet publish NzbDrone.Console/Readarr.Console.csproj \
     -c Release \
+    -f net6.0 \
     -r linux-x64 \
     --self-contained false \
     --no-restore \
